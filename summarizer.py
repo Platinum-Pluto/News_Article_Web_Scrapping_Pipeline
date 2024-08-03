@@ -5,9 +5,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
-nltk.download('punkt')
-
 def summarize_paragraph(paragraph):
     sentences = sent_tokenize(paragraph)
     if sentences:
@@ -16,12 +13,7 @@ def summarize_paragraph(paragraph):
         summary = ""
     return summary
 
-file_path = 'cleaned_preprocessed_data.xlsx'
-try:
-    df = pd.read_excel(file_path)
-except Exception as e:
-    logging.error(f"Error reading Excel file: {e}")
-    raise
+
 
 def apply_summarization(data):
     summaries = []
@@ -32,11 +24,10 @@ def apply_summarization(data):
             summaries.append(summary)
     return summaries
 
-df['Summary'] = apply_summarization(df['Content'])
-output_file_path = 'cleaned_preprocessed_data_with_summary.xlsx'
-df.to_excel(output_file_path, index=False)
 
-
-
-
-print(f"Summarization completed. Results saved to {output_file_path}")
+def add_summarizing(df):
+    logging.basicConfig(level=logging.DEBUG)
+    nltk.download('punkt')
+    df['Summary'] = apply_summarization(df['Content'])
+    print(f"Summarization completed")
+    return df 
